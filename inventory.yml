@@ -1,0 +1,2 @@
+[libvirt_cr]
+dell-r630-06.infra.sat.rdu2.redhat.com ansible_user=root

@@ -1,2 +1,24 @@
 ---
 # tasks file for libvirt-install
+
+- name: Verify virtualization is enabled in BIOS
+  shell: lscpu | grep Virtualization
+
+- name: Install required packages
+  yum:
+    name:
+      - qemu-kvm
+      - libvirt
+      - libvirt-python
+      - libguestfs-tools
+      - virt-install
+    state: present
+
+- name: Enable libvirt service
+  service:
+    name: libvirtd
+    enabled: yes
+    state: started
+
+- name: Verify kvm module is enabled
+  shell: lsmod | grep -i ^kvm

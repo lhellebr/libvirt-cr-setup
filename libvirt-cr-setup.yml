@@ -1,0 +1,5 @@
+---
+- hosts: libvirt_cr
+  become: yes
+  roles:
+    - libvirt-install
