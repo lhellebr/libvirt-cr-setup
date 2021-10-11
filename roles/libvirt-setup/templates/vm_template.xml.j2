@@ -1,0 +1,24 @@
+<domain type='kvm'>
+  <name>{{ vm_uuid }}</name>
+  <uuid>{{ vm_uuid }}</uuid>
+  <memory>219200</memory>
+  <currentMemory>219200</currentMemory>
+  <vcpu>2</vcpu>
+  <os firmware='efi'>
+    <type>hvm</type>
+    <boot dev='hd'/>
+    <boot dev='cdrom'/>
+    <bootmenu enable='yes' timeout='1500'/>
+  </os>
+  <devices>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='{{ qcow_path }}'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <interface type='network'>
+      <source network='default'/>
+    </interface>
+    <graphics type='vnc' port='-1'/>
+  </devices>
+</domain>

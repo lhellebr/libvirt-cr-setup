@@ -1,0 +1,22 @@
+---
+# tasks file for libvirt-setup
+
+- name: set fact here
+  set_fact:
+    vm_uuid: "{{ 42424242 | random | to_uuid }}"
+
+- name: Download a CentOS7 qcow2 image
+  get_url:
+    url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+    dest: "{{ qcow_path }}"
+
+- name: Create a test VM
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'vm_template.xml.j2') }}"
+    autostart: yes
+
+- name: Run a test VM
+  community.libvirt.virt:
+    name: "{{ vm_uuid }}"
+    state: running
