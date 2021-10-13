@@ -1,2 +1,6 @@
 ---
 # vars file for libvirt-setup
+
+bridge_name: br0
+slave_name: br0-slave1
+virbridge_name: bridged-network

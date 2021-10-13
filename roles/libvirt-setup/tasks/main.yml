@@ -1,7 +1,7 @@
 ---
 # tasks file for libvirt-setup
 
-- name: set fact here
+- name: Generate a random VM UUID
   set_fact:
     vm_uuid: "{{ 42424242 | random | to_uuid }}"
 
@@ -9,6 +9,47 @@
   get_url:
     url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
     dest: "{{ qcow_path }}"
+
+- name: Set image's default root password
+  command: virt-customize -a "{{ qcow_path }}" --root-password "password:{{ root_password }}"
+
+###
+
+- name: Create a bridge
+  community.general.nmcli:
+    type: bridge
+    conn_name: "{{ bridge_name }}"
+    ifname: "{{ bridge_name }}"
+    state: present
+    stp: no
+
+- name: Add a physical interface to the bridge
+  community.general.nmcli:
+    conn_name: "{{ slave_name }}"
+    ifname: "{{ iface_for_bridge }}"
+    type: bridge-slave
+    master: "{{ bridge_name }}"
+    state: present
+    stp: no
+
+- name: Create a virtual network using the bridge
+  community.libvirt.virt_net:
+    name: "{{ virbridge_name }}"
+    state: present
+    xml: "{{ lookup('template', 'bridged_network.xml') }}"
+
+- name: Autostart the virtual network on boot
+  community.libvirt.virt_net:
+    name: "{{ virbridge_name }}"
+    autostart: yes
+
+- name: Start the virtual network now
+  community.libvirt.virt_net:
+    name: "{{ virbridge_name }}"
+    state: active
+  
+
+###
 
 - name: Create a test VM
   community.libvirt.virt:
