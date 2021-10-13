@@ -3,6 +3,7 @@
 
 - name: Verify virtualization is enabled in BIOS
   shell: lscpu | grep Virtualization
+  changed_when: false
 
 - name: Install required packages
   yum:
@@ -22,3 +23,4 @@
 
 - name: Verify kvm module is enabled
   shell: lsmod | grep -i ^kvm
+  changed_when: false
