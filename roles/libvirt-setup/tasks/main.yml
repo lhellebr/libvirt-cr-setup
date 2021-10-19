@@ -18,14 +18,20 @@
 - name: Create a bridge
   community.general.nmcli:
     type: bridge
-    conn_name: "{{ bridge_name }}"
+    conn_name: "bridge-{{ bridge_name }}"
     ifname: "{{ bridge_name }}"
     state: present
     stp: no
+    method4: auto
+
+- name: Remove the original interface
+  community.general.nmcli:
+    conn_name: "{{ iface_for_bridge }}"
+    state: absent
 
 - name: Add a physical interface to the bridge
   community.general.nmcli:
-    conn_name: "{{ slave_name }}"
+    conn_name: "bridge-slave-{{ iface_for_bridge }}"
     ifname: "{{ iface_for_bridge }}"
     type: bridge-slave
     master: "{{ bridge_name }}"
